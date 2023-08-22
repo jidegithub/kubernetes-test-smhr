@@ -23,15 +23,17 @@ resource "aws_iam_role_policy_attachment" "demo-AmazonEKSClusterPolicy" {
 }
 
 variable "cluster_name" {
-  default = "demo"
-  type = string
+  default     = "demo"
+  type        = string
   description = "AWS EKS CLuster Name"
-  nullable = false
+  nullable    = false
 }
 
 resource "aws_eks_cluster" "demo" {
   name     = var.cluster_name
   role_arn = aws_iam_role.demo.arn
+
+  version = "1.25"
 
   vpc_config {
     subnet_ids = [
