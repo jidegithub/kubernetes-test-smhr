@@ -72,8 +72,24 @@ services:
       - Elasticsearch
       - Kibana  
     
+# Configure Stack container. This container configures the stack after Kibana and Elasticsearch have been deployed.
+configure_stack:
+container_name: configure_stack
+image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION}
+environment:
+- 'ELASTIC_VERSION=${ELASTIC_VERSION}'
+- 'ES_PASSWORD=${ES_PASSWORD}'
+- 'ES_DEFAULT_INDEX_PATTERN=${ES_DEFAULT_INDEX_PATTERN}'
 volumes:
-  elastic_data: {}
+- './init/configure-stack.sh:/usr/local/bin/configure-stack.sh:ro'
+command: ['/bin/bash', '-c', 'cat /usr/local/bin/configure-stack.sh | tr -d "\r" | bash']
+networks:
+- 'elk'
+depends_on:
+  - Elasticsearch
+  - Kibana
+# volumes:
+#   elastic_data: {}
 
 # networks:
 #   elk:
